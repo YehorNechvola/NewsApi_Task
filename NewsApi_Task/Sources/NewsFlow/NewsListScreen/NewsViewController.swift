@@ -17,7 +17,7 @@ final class NewsViewController: UIViewController {
     
     private lazy var newsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
-        tableView.rowHeight = 120
+        tableView.rowHeight = 140
         tableView.register(ArticleTableViewCell.self, forCellReuseIdentifier: ArticleTableViewCell.id)
         tableView.dataSource = self
         tableView.delegate = self

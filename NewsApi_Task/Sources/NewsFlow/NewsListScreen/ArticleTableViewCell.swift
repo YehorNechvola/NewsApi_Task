@@ -6,11 +6,14 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ArticleTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     static let id = String(describing: ArticleTableViewCell.self)
+    private let imagePlaceholder: UIImage? = UIImage(systemName: "photo")?
+        .withTintColor(.red, renderingMode: .alwaysOriginal)
 
     // MARK: - UI
     private lazy var articleImageView: UIImageView = {
@@ -74,7 +77,7 @@ final class ArticleTableViewCell: UITableViewCell {
             mainStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             
-            articleImageView.widthAnchor.constraint(equalToConstant: 90),
+            articleImageView.widthAnchor.constraint(equalToConstant: 130),
             articleImageView.heightAnchor.constraint(equalToConstant: 90)
         ])
     }
@@ -85,9 +88,9 @@ final class ArticleTableViewCell: UITableViewCell {
         descriptionLabel.text = article.description
         
         if let urlString = article.urlToImage {
-           print(urlString)
+            articleImageView.downloadImage(url: urlString, placeholder: imagePlaceholder)
         } else {
-            articleImageView.image = nil
+            articleImageView.image = imagePlaceholder
         }
     }
 }
