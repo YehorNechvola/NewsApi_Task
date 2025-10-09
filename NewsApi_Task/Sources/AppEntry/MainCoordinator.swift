@@ -19,7 +19,11 @@ final class MainCoordinator {
     
     // MARK: - Methods
     func start() {
-        let rootVC = UIViewController()
-        navigationController.viewControllers = [rootVC]
+        let viewController = NewsViewController()
+        let baseRequestService = BaseRequestService()
+        let newsService = NewsApiService(baseRequestService: baseRequestService)
+        let viewModel = NewsListViewModel(newsService: newsService)
+        viewController.viewModel = viewModel
+        navigationController.viewControllers = [viewController]
     }
 }
