@@ -23,7 +23,7 @@ final class NewsViewController: UIViewController {
     
     private lazy var newsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
-        tableView.rowHeight = 140
+        tableView.rowHeight = Constants.rowHeight
         tableView.register(ArticleTableViewCell.self, forCellReuseIdentifier: ArticleTableViewCell.id)
         tableView.dataSource = self
         tableView.delegate = self
@@ -46,7 +46,7 @@ final class NewsViewController: UIViewController {
 private extension NewsViewController {
     func setup() {
         view.backgroundColor = .systemBackground
-        title = "News"
+        title = Constants.title
         
         setupSearchController()
         setupTableViewConstraints()
@@ -55,7 +55,7 @@ private extension NewsViewController {
     func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search articles..."
+        searchController.searchBar.placeholder = Constants.searchPlaceholder
         
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -122,5 +122,15 @@ extension NewsViewController: UITableViewDataSource {
 extension NewsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.didTapOnNews(by: indexPath.row)
+    }
+}
+
+// MARK: - Constants
+extension NewsViewController {
+    enum Constants {
+        static let title = "News"
+        static let rowHeight: CGFloat = 140
+        
+        static let searchPlaceholder = "Search articles..."
     }
 }

@@ -17,31 +17,31 @@ final class DetailsViewController: UIViewController {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 12
+        imageView.layer.cornerRadius = Constants.imageCornerRadius
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .boldSystemFont(ofSize: 24)
+        label.font = .boldSystemFont(ofSize: Constants.titleFontSize)
         label.numberOfLines = 0
         return label
     }()
     
     private let descriptionTextView: UITextView = {
         let textView = UITextView()
-        textView.font = .systemFont(ofSize: 16)
+        textView.font = .systemFont(ofSize: Constants.descriptionFontSize)
         textView.isEditable = false
         textView.isScrollEnabled = true
-        textView.textContainerInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+        textView.textContainerInset = Constants.textViewInset
         return textView
     }()
     
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [articleImageView, titleLabel, descriptionTextView])
         stackView.axis = .vertical
-        stackView.spacing = 12
+        stackView.spacing = Constants.stackSpacing
         stackView.alignment = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
@@ -61,13 +61,13 @@ final class DetailsViewController: UIViewController {
         view.addSubview(stackView)
         
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.verticalPadding),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.verticalPadding),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.horizontalPadding),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Constants.horizontalPadding),
             
-            descriptionTextView.heightAnchor.constraint(equalToConstant: 200),
-            articleImageView.heightAnchor.constraint(equalToConstant: 250)
+            descriptionTextView.heightAnchor.constraint(equalToConstant: Constants.descriptionHeight),
+            articleImageView.heightAnchor.constraint(equalToConstant: Constants.imageHeight)
         ])
     }
     
@@ -90,5 +90,23 @@ final class DetailsViewController: UIViewController {
         } else {
             articleImageView.image = imagePlaceholder
         }
+    }
+}
+
+// MARK: - Constant
+extension DetailsViewController {
+    enum Constants {
+        static let horizontalPadding: CGFloat = 16
+        static let verticalPadding: CGFloat = 16
+        static let stackSpacing: CGFloat = 12
+        
+        static let imageCornerRadius: CGFloat = 12
+        static let imageHeight: CGFloat = 250
+        static let descriptionHeight: CGFloat = 200
+        
+        static let titleFontSize: CGFloat = 24
+        static let descriptionFontSize: CGFloat = 16
+        
+        static let textViewInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
     }
 }

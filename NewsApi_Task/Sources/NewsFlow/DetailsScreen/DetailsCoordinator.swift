@@ -30,7 +30,7 @@ final class DetailsCoordinator: Coordinator {
         navigationController.pushViewController(viewController, animated: true)
     }
     
-    func addCoordinator(_ coordinator: Coordinator) {
+    private func addCoordinator(_ coordinator: Coordinator) {
         childCoordinators.removeAll(where: { $0.id == coordinator.id })
         childCoordinators.append(coordinator)
     }
