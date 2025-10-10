@@ -13,14 +13,16 @@ protocol NewsListViewModelProtocol {
     func onLoad()
     func didTapOnNews(by index: Int)
     func searchNews(by text: String)
+    func refreshNews()
 }
 
 final class NewsListViewModel: NewsListViewModelProtocol {
     
     // MARK: - Output
     struct Output {
+        var onLoading: () -> Void
         var onLoad: () -> Void
-        var onAddNewArticles: () -> Void
+        var onRefresh: () -> Void
         var onError: () -> Void
     }
     
@@ -50,6 +52,7 @@ final class NewsListViewModel: NewsListViewModelProtocol {
     }
     
     func onLoad() {
+        output.onLoading()
         newsService.getNewsList { [weak self] result in
             switch result {
             case .success(let response):
@@ -71,6 +74,11 @@ final class NewsListViewModel: NewsListViewModelProtocol {
     
     func searchNews(by text: String) {
         searchText = text
+    }
+    
+    func refreshNews() {
+        output.onRefresh()
+        self.onLoad()
     }
     
     // MARK: - Private Methods

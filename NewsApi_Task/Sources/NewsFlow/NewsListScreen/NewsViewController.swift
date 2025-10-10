@@ -15,6 +15,12 @@ final class NewsViewController: UIViewController {
     // MARK: - UI
     private lazy var searchController = UISearchController(searchResultsController: nil)
     
+    private lazy var refreshControl: UIRefreshControl =  {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        return refreshControl
+    }()
+    
     private lazy var newsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.rowHeight = 140
@@ -22,6 +28,7 @@ final class NewsViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.refreshControl = refreshControl
         return tableView
     }()
     
@@ -68,11 +75,25 @@ private extension NewsViewController {
     
     func bind() {
         viewModel.atachOutput(
-            .init(onLoad: { [weak self] in self?.newsTableView.reloadData() },
-                  onAddNewArticles: { [weak self] in self?.newsTableView.reloadData() },
-                  onError: { print("Error") }
+            .init(onLoading: { [weak self] in
+                self?.refreshControl.beginRefreshing() },
+                  onLoad: { [weak self] in
+                      self?.newsTableView.reloadData()
+                      self?.refreshControl.endRefreshing()
+                  },
+                  onRefresh: { [weak self] in
+                      self?.searchController.searchBar.text = ""
+                  },
+                  onError: { [weak self] in
+                      self?.refreshControl.endRefreshing()
+                  }
                  )
         )
+    }
+    
+    // MARK: - Actions
+    @objc func didPullToRefresh() {
+        viewModel.refreshNews()
     }
 }
 
