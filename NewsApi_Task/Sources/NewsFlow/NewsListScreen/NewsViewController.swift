@@ -79,19 +79,19 @@ private extension NewsViewController {
 // MARK: - UISearchResultsUpdating
 extension NewsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-
+        viewModel.searchNews(by: searchController.searchBar.text ?? "")
     }
 }
 
 // MARK: - UITableViewDataSource
 extension NewsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.newsList.count
+        viewModel.searchedNewsList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ArticleTableViewCell.id, for: indexPath) as! ArticleTableViewCell
-        cell.configure(with: viewModel.newsList[indexPath.row])
+        cell.configure(with: viewModel.searchedNewsList[indexPath.row])
         
         return cell
     }

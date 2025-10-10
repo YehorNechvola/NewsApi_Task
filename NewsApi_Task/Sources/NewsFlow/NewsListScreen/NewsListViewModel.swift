@@ -8,7 +8,7 @@
 import Foundation
 
 protocol NewsListViewModelProtocol {
-    var newsList: [Article] { get }
+    var searchedNewsList: [Article] { get }
     func atachOutput(_ output: NewsListViewModel.Output)
     func onLoad()
     func didTapOnNews(by index: Int)
@@ -28,8 +28,16 @@ final class NewsListViewModel: NewsListViewModelProtocol {
     weak var coordinator: NewsScreenCoordinator!
     private var output: Output!
     private let newsService: NewsApiServiceProtocol
-    var newsList: [Article] = []
-    private var searchedNewsList: [Article] = []
+    private var allNewsList: [Article] = []
+    var searchedNewsList: [Article] = []
+    
+    private var searchText: String = "" {
+           didSet {
+               debounceSearch()
+           }
+       }
+    
+    private var searchWorkItem: DispatchWorkItem?
     
     // MARK: - Init
     init(newsService: NewsApiServiceProtocol) {
@@ -46,7 +54,8 @@ final class NewsListViewModel: NewsListViewModelProtocol {
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    self?.newsList = response.articles
+                    self?.allNewsList = response.articles
+                    self?.searchedNewsList = response.articles
                     self?.output.onLoad()
                 }
             case .failure(let error):
@@ -56,11 +65,42 @@ final class NewsListViewModel: NewsListViewModelProtocol {
     }
     
     func didTapOnNews(by index: Int) {
-        let article = newsList[index]
+        let article = allNewsList[index]
         coordinator.openDetails(for: article)
     }
     
     func searchNews(by text: String) {
+        searchText = text
+    }
     
+    // MARK: - Private Methods
+    private func debounceSearch() {
+        searchWorkItem?.cancel()
+        
+        guard !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            filterNews()
+            return
+        }
+        
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.filterNews()
+        }
+        
+        searchWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: workItem)
+    }
+    
+    private func filterNews() {
+        let text = searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if text.isEmpty {
+            searchedNewsList = allNewsList
+        } else {
+            searchedNewsList = allNewsList.filter { $0.title.lowercased().contains(text) }
+        }
+        
+        DispatchQueue.main.async {
+            self.output.onLoad()
+        }
     }
 }
