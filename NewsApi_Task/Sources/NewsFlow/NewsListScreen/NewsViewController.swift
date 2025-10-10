@@ -31,7 +31,7 @@ final class NewsViewController: UIViewController {
         
         setup()
         bind()
-        viewModel.fetchNews()
+        viewModel.onLoad()
     }
 }
 
@@ -68,7 +68,7 @@ private extension NewsViewController {
     
     func bind() {
         viewModel.atachOutput(
-            .init(onLoading: { [weak self] in self?.newsTableView.reloadData() },
+            .init(onLoad: { [weak self] in self?.newsTableView.reloadData() },
                   onAddNewArticles: { [weak self] in self?.newsTableView.reloadData() },
                   onError: { print("Error") }
                  )
@@ -100,6 +100,6 @@ extension NewsViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension NewsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        viewModel.didTapOnNews(by: indexPath.row)
     }
 }

@@ -10,8 +10,8 @@ import Foundation
 protocol NewsListViewModelProtocol {
     var newsList: [Article] { get }
     func atachOutput(_ output: NewsListViewModel.Output)
-    func fetchNews()
-    func didTapOnNews()
+    func onLoad()
+    func didTapOnNews(by index: Int)
     func searchNews(by text: String)
 }
 
@@ -19,17 +19,17 @@ final class NewsListViewModel: NewsListViewModelProtocol {
     
     // MARK: - Output
     struct Output {
-        var onLoading: (() -> Void)
-        var onAddNewArticles: (() -> Void)
-        var onError: (() -> Void)
+        var onLoad: () -> Void
+        var onAddNewArticles: () -> Void
+        var onError: () -> Void
     }
     
     // MARK: - Properties
+    weak var coordinator: NewsScreenCoordinator!
     private var output: Output!
     private let newsService: NewsApiServiceProtocol
     var newsList: [Article] = []
     private var searchedNewsList: [Article] = []
-    
     
     // MARK: - Init
     init(newsService: NewsApiServiceProtocol) {
@@ -41,13 +41,13 @@ final class NewsListViewModel: NewsListViewModelProtocol {
         self.output = output
     }
     
-    func fetchNews() {
+    func onLoad() {
         newsService.getNewsList { [weak self] result in
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
                     self?.newsList = response.articles
-                    self?.output.onLoading()
+                    self?.output.onLoad()
                 }
             case .failure(let error):
                 print(error)
@@ -55,8 +55,9 @@ final class NewsListViewModel: NewsListViewModelProtocol {
         }
     }
     
-    func didTapOnNews() {
-        
+    func didTapOnNews(by index: Int) {
+        let article = newsList[index]
+        coordinator.openDetails(for: article)
     }
     
     func searchNews(by text: String) {

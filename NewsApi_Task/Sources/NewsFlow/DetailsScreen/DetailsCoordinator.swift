@@ -1,39 +1,33 @@
 //
-//  MainCoordinator.swift
+//  DetailsCoordinator.swift
 //  NewsApi_Task
 //
 //  Created by Rush_user on 09.10.2025.
 //
 
+
 import UIKit
 
-protocol Coordinator {
-    var id: String { get }
-    func start()
-}
-
-enum ScreenId: String {
-    case newsList
-    case details
-}
-
-final class MainCoordinator: Coordinator {
+final class DetailsCoordinator: Coordinator {
     
     // MARK: - Properties
     private let navigationController: UINavigationController
     private var childCoordinators: [Coordinator] = []
-    let id = String(describing: MainCoordinator.self)
+    private let article: Article
+    let id = ScreenId.details.rawValue
     
     // MARK: - Init
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, article: Article) {
         self.navigationController = navigationController
+        self.article = article
     }
     
     // MARK: - Methods
     func start() {
-        let newScreenCoordinator = NewsScreenCoordinator(navigationController: navigationController)
-        addCoordinator(newScreenCoordinator)
-        newScreenCoordinator.start()
+        let viewController = DetailsViewController()
+        let viewModel = DetailsViewModel(article: article)
+        viewController.viewModel = viewModel
+        navigationController.pushViewController(viewController, animated: true)
     }
     
     func addCoordinator(_ coordinator: Coordinator) {
