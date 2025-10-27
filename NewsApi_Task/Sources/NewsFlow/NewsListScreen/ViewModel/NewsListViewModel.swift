@@ -68,7 +68,7 @@ final class NewsListViewModel: NewsListViewModelProtocol {
     }
     
     func didTapOnNews(by index: Int) {
-        let article = searchedNewsList.isEmpty ? allNewsList[index] : searchedNewsList[index]
+        let article = searchedNewsList[index]
         coordinator.openDetails(for: article)
     }
     
